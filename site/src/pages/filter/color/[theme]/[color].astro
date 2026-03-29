@@ -1,0 +1,43 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import GalleryCard from '../../../../components/GalleryCard.astro';
+import { galleryItems } from '../../../../data/gallery';
+
+export function getStaticPaths() {
+  const combos = new Set<string>();
+  galleryItems.forEach(i => combos.add(`${i.theme}|${i.color}`));
+  return [...combos].map(c => {
+    const [theme, color] = c.split('|');
+    return { params: { theme, color } };
+  });
+}
+
+const { theme, color } = Astro.params;
+const filtered = galleryItems.filter(i => i.theme === theme && i.color === color).sort(() => Math.random() - 0.5).slice(0, 12);
+---
+
+<Base title={`${theme} + ${color} — Almost Parallel`}>
+  <div class="ap-scatter" id="gallery">
+    {filtered.map((item) => (
+      <div class="ap-scatter__item">
+        <GalleryCard item={item} />
+      </div>
+    ))}
+  </div>
+
+  <script is:inline>
+    var gallery = document.getElementById('gallery');
+    if (gallery) {
+      gallery.addEventListener('click', function(e) {
+        var card = e.target.closest('.ap-card');
+        if (!card) return;
+        var project = card.getAttribute('data-project');
+        if (project) {
+          window.location.href = '/project/' + project;
+        } else {
+          window.location.href = '/';
+        }
+      });
+    }
+  </script>
+</Base>

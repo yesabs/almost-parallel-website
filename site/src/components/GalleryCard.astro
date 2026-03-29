@@ -1,0 +1,25 @@
+---
+import type { GalleryItem } from '../data/gallery';
+import { COLOR_HEX } from '../data/gallery';
+
+interface Props {
+  item: GalleryItem;
+}
+
+const { item } = Astro.props;
+---
+
+<div
+  class="ap-card"
+  data-theme={item.theme}
+  data-color={item.color}
+  data-project={item.project || ''}
+  data-id={item.id}
+>
+  <div
+    class="ap-card__img"
+    style={`aspect-ratio:${item.aspectRatio}; background-color:${COLOR_HEX[item.color]};`}
+  />
+  <span class="ap-card__title">{item.id}</span>
+  <span class="ap-card__meta">{item.title}</span>
+</div>

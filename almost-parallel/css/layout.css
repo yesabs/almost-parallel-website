@@ -1,0 +1,96 @@
+:root {
+    --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --color-bg: #ffffff;
+    --color-text: #1D1D1D;
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --space-xl: 8rem;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+
+/* Header */
+.ap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    font-size: 13px;
+    text-transform: lowercase;
+}
+
+.ap-header__logo {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.ap-header__nav a {
+    opacity: 0.6;
+}
+
+.ap-header__nav a:hover {
+    opacity: 1;
+}
+
+/* Main */
+.ap-main {
+    padding: var(--space-md) var(--space-lg);
+    min-height: 70vh;
+}
+
+/* Grid - Random View (fala-inspired) */
+.ap-grid--random {
+    columns: 3;
+    column-gap: var(--space-lg);
+}
+
+.ap-grid--random .ap-card {
+    break-inside: avoid;
+    margin-bottom: var(--space-lg);
+    cursor: pointer;
+}
+
+.ap-card__title {
+    font-size: 11px;
+    margin-top: var(--space-xs);
+    opacity: 0.5;
+}
+
+/* Placeholder blocks */
+.ap-placeholder {
+    width: 100%;
+    display: block;
+}
+
+/* Footer */
+.ap-footer {
+    padding: var(--space-lg);
+    font-size: 11px;
+    opacity: 0.4;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .ap-grid--random {
+        columns: 2;
+        column-gap: var(--space-md);
+    }
+    .ap-main, .ap-header {
+        padding: var(--space-sm) var(--space-md);
+    }
+}
+
+@media (max-width: 600px) {
+    .ap-grid--random {
+        columns: 1;
+    }
+}

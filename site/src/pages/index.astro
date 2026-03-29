@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+import GalleryCard from '../components/GalleryCard.astro';
+import { galleryItems } from '../data/gallery';
+
+const scatterItems = [...galleryItems].sort(() => Math.random() - 0.5).slice(0, 12);
+const gridItems = [...galleryItems].sort(() => Math.random() - 0.5);
+---
+
+<Base title="Almost Parallel">
+  <!-- Scatter view (default, 12 items) -->
+  <div class="ap-scatter" id="gallery-scatter">
+    {scatterItems.map((item) => (
+      <div class="ap-scatter__item">
+        <GalleryCard item={item} />
+      </div>
+    ))}
+  </div>
+
+  <!-- Grid view — each image repeated across its row -->
+  {(() => {
+    // Row patterns: how many times to repeat the image in that row
+    const rowPatterns = [4, 3, 5, 2, 4, 3, 6, 2, 5, 3, 4, 3];
+    let rowIndex = 0;
+    const rows: { item: typeof gridItems[0]; repeat: number }[] = [];
+    for (const item of gridItems) {
+      rows.push({ item, repeat: rowPatterns[rowIndex % rowPatterns.length] });
+      rowIndex++;
+    }
+    return (
+      <div class="ap-grid--packed" id="gallery-grid" style="display:none;">
+        {rows.map(({ item, repeat }) => (
+          <div class="ap-grid__row">
+            {Array.from({ length: repeat }).map(() => (
+              <div class="ap-grid__cell" style={`width:${100 / repeat}%;`}>
+                <img class="ap-grid__img" src={item.image} alt={item.title} loading="lazy" />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  })()}
+
+
+  <script is:inline>
+    var scatter = document.getElementById('gallery-scatter');
+    var grid = document.getElementById('gallery-grid');
+    var footer = document.querySelector('.ap-footer');
+    var main = document.querySelector('.ap-main');
+
+    if (scatter) {
+      scatter.addEventListener('click', function(e) {
+        var card = e.target.closest('.ap-card');
+        if (!card) return;
+        var theme = card.getAttribute('data-theme');
+        if (theme) window.location.href = '/filter/theme/' + theme;
+      });
+    }
+
+    var loopBtn = document.getElementById('toggle-loop');
+    var gridBtn = document.getElementById('toggle-grid');
+
+    if (loopBtn && gridBtn) {
+      gridBtn.addEventListener('click', function() {
+        scatter.style.display = 'none';
+        grid.style.display = '';
+        if (main) main.style.paddingTop = '0';
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('grid-mode');
+        gridBtn.classList.add('ap-header__btn--active');
+        loopBtn.classList.remove('ap-header__btn--active');
+      });
+
+      loopBtn.addEventListener('click', function() {
+        grid.style.display = 'none';
+        scatter.style.display = '';
+        if (main) main.style.paddingTop = '';
+        document.body.style.overflow = '';
+        document.body.classList.remove('grid-mode');
+        loopBtn.classList.add('ap-header__btn--active');
+        gridBtn.classList.remove('ap-header__btn--active');
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && grid.style.display !== 'none') {
+        loopBtn.click();
+      }
+    });
+
+    // Auto-switch to grid if navigated with ?view=grid
+    if (new URLSearchParams(window.location.search).get('view') === 'grid') {
+      gridBtn.click();
+      history.replaceState(null, '', '/');
+    }
+
+    // Infinite scroll for grid view
+    if (grid) {
+      var originalRows = Array.from(grid.querySelectorAll('.ap-grid__row'));
+      var appending = false;
+
+      grid.addEventListener('scroll', function() {
+        if (appending) return;
+        if (grid.scrollTop + grid.clientHeight > grid.scrollHeight - 400) {
+          appending = true;
+          originalRows.forEach(function(row) {
+            grid.appendChild(row.cloneNode(true));
+          });
+          appending = false;
+        }
+      });
+    }
+  </script>
+</Base>

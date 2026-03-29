@@ -1,0 +1,37 @@
+---
+import Base from '../../../layouts/Base.astro';
+import GalleryCard from '../../../components/GalleryCard.astro';
+import { galleryItems } from '../../../data/gallery';
+
+export function getStaticPaths() {
+  const themes = [...new Set(galleryItems.map(i => i.theme))];
+  return themes.map(t => ({ params: { theme: t } }));
+}
+
+const { theme } = Astro.params;
+const filtered = galleryItems.filter(i => i.theme === theme).sort(() => Math.random() - 0.5).slice(0, 12);
+---
+
+<Base title={`${theme} — Almost Parallel`}>
+  <div class="ap-scatter" id="gallery">
+    {filtered.map((item) => (
+      <div class="ap-scatter__item">
+        <GalleryCard item={item} />
+      </div>
+    ))}
+  </div>
+
+  <script is:inline define:vars={{ currentTheme: theme }}>
+    var gallery = document.getElementById('gallery');
+    if (gallery) {
+      gallery.addEventListener('click', function(e) {
+        var card = e.target.closest('.ap-card');
+        if (!card) return;
+        var color = card.getAttribute('data-color');
+        if (color) {
+          window.location.href = '/filter/color/' + currentTheme + '/' + color;
+        }
+      });
+    }
+  </script>
+</Base>

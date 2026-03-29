@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+import GalleryCard from '../../components/GalleryCard.astro';
+import { galleryItems, projects } from '../../data/gallery';
+
+export function getStaticPaths() {
+  return projects.map((p) => ({
+    params: { slug: p.slug },
+    props: { project: p },
+  }));
+}
+
+const { project } = Astro.props;
+const items = galleryItems.filter((i) => i.project === project.slug).sort(() => Math.random() - 0.5).slice(0, 12);
+---
+
+<Base title={`${project.title} — Almost Parallel`} projectName={project.title}>
+  <div class="ap-scatter" id="gallery">
+    {items.map((item) => (
+      <div class="ap-scatter__item">
+        <GalleryCard item={item} />
+      </div>
+    ))}
+  </div>
+
+  <script is:inline>
+    var gallery = document.getElementById('gallery');
+    if (gallery) {
+      gallery.addEventListener('click', function(e) {
+        var card = e.target.closest('.ap-card');
+        if (!card) return;
+        window.location.href = '/';
+      });
+    }
+  </script>
+</Base>

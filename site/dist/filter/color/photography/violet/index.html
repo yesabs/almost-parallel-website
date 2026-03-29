@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>photography + violet — Almost Parallel</title><link rel="stylesheet" href="/styles/reset.css"><link rel="stylesheet" href="/styles/layout.css"><link rel="stylesheet" href="/styles/components.css"></head> <body class>  <div class id="site-content"> <header class="ap-header"> <div class="ap-header__row1"> <a href="/" class="ap-header__logo">ALMOST</a> <a href="/" class="ap-header__logo">PARALLEL</a> <div class="ap-header__address"> <span data-en="Carrer Santiago Apostol 69" data-es="Carrer Santiago Apostol 69">Carrer Santiago Apostol 69</span> <span data-en="08903 Barcelona" data-es="08903 Barcelona">08903 Barcelona</span> <span data-en="Spain" data-es="España">Spain</span> </div> <div class="ap-header__ig"> <a href="https://instagram.com/almostparallel.studio" target="_blank">IG</a> <span>+</span> </div> <p class="ap-header__desc" data-en="This website is our digital archive. A compendium of our architecture studio's ideas, processes and realities" data-es="Este sitio web es nuestro archivo digital. Un compendio de las ideas, procesos y realidades de nuestro estudio de arquitectura">This website is our digital archive. A compendium of our architecture studio's ideas, processes and realities</p> <a href="/about" class="ap-header__about" data-en="ABOUT" data-es="INFO">ABOUT</a> </div> <div class="ap-header__row2"> <div class="ap-header__empty"></div> <div class="ap-header__toggles"> <button id="toggle-loop" class="ap-header__btn ap-header__btn--active">[ LOOP ]</button> <button id="toggle-grid" class="ap-header__btn">[ GRID ]</button> </div> <div class="ap-header__contact"> <span>11@almostparallel.studio</span> <span>+34. 602 375 521</span> </div> <div class="ap-header__ig-spacer"></div> <div class="ap-header__desc2"></div> <div class="ap-header__lang"> <button id="lang-en" class="ap-header__btn ap-header__btn--active">[ ENG ]</button> <button id="lang-es" class="ap-header__btn">[ ESP ]</button> </div> </div>  </header> <main class="ap-main">  <div class="ap-scatter" id="gallery"> <div class="ap-scatter__item"> <div class="ap-card" data-theme="photography" data-color="violet" data-project="pavilion-bcn" data-id="A.48"> <div class="ap-card__img" style="aspect-ratio:4/3; background-color:#7B2D8E;"></div> <span class="ap-card__title">A.48</span> <span class="ap-card__meta">Night Facade</span> </div> </div> </div> <script>
+    var gallery = document.getElementById('gallery');
+    if (gallery) {
+      gallery.addEventListener('click', function(e) {
+        var card = e.target.closest('.ap-card');
+        if (!card) return;
+        var project = card.getAttribute('data-project');
+        if (project) {
+          window.location.href = '/project/' + project;
+        } else {
+          window.location.href = '/';
+        }
+      });
+    }
+  </script>  </main> <footer class="ap-footer"> <span class="ap-footer__left">θ=€ (0&lt;€&lt;1)</span> <span class="ap-footer__right" id="footer-clock"></span> </footer> </div> <script>
+    // Clock
+    function updateClock() {
+      var el = document.getElementById('footer-clock');
+      if (el) {
+        el.textContent = new Date().toLocaleTimeString('en-US', {
+          hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Europe/Madrid'
+        }) + ' CET';
+      }
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Grid/Loop nav
+    var gridBtn = document.getElementById('toggle-grid');
+    var loopBtn = document.getElementById('toggle-loop');
+    var isHome = window.location.pathname === '/' || window.location.pathname === '';
+    if (gridBtn && !isHome) {
+      gridBtn.addEventListener('click', function() {
+        window.location.href = '/?view=grid';
+      });
+    }
+    if (loopBtn && !isHome) {
+      loopBtn.addEventListener('click', function() {
+        window.location.href = '/';
+      });
+    }
+
+    // Intro
+    var intro = document.getElementById('intro');
+    var siteContent = document.getElementById('site-content');
+    if (intro && siteContent) {
+      setTimeout(function() {
+        intro.classList.add('is-leaving');
+        siteContent.classList.add('is-visible');
+      }, 2400);
+      setTimeout(function() { intro.remove(); }, 3000);
+    }
+
+    // ── Language Toggle ──
+    var langEn = document.getElementById('lang-en');
+    var langEs = document.getElementById('lang-es');
+
+    function setLang(lang) {
+      localStorage.setItem('ap-lang', lang);
+      document.documentElement.lang = lang === 'es' ? 'es' : 'en';
+
+      // Toggle button states
+      if (langEn && langEs) {
+        langEn.classList.toggle('ap-header__btn--active', lang === 'en');
+        langEs.classList.toggle('ap-header__btn--active', lang === 'es');
+      }
+
+      // Swap all elements with data-en / data-es attributes
+      var els = document.querySelectorAll('[data-en][data-es]');
+      els.forEach(function(el) {
+        el.textContent = lang === 'es' ? el.getAttribute('data-es') : el.getAttribute('data-en');
+      });
+    }
+
+    if (langEn) {
+      langEn.addEventListener('click', function() { setLang('en'); });
+    }
+    if (langEs) {
+      langEs.addEventListener('click', function() { setLang('es'); });
+    }
+
+    // Restore saved language
+    var savedLang = localStorage.getItem('ap-lang');
+    if (savedLang === 'es') {
+      setLang('es');
+    }
+  </script>  </body></html>
