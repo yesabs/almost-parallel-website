@@ -16,7 +16,7 @@ const { theme, color } = Astro.params;
 const filtered = galleryItems.filter(i => i.theme === theme && i.color === color).sort(() => Math.random() - 0.5).slice(0, 12);
 ---
 
-<Base title={`${theme} + ${color} — Almost Parallel`}>
+<Base title={`${theme} + ${color} — Almost Parallel`} noindex={true}>
   <div class="ap-scatter" id="gallery">
     {filtered.map((item) => (
       <div class="ap-scatter__item">
@@ -28,14 +28,18 @@ const filtered = galleryItems.filter(i => i.theme === theme && i.color === color
   <script is:inline>
     var gallery = document.getElementById('gallery');
     if (gallery) {
+      function navFromColor(card) {
+        var project = card.getAttribute('data-project');
+        window.location.href = project ? '/project/' + project : '/';
+      }
       gallery.addEventListener('click', function(e) {
         var card = e.target.closest('.ap-card');
-        if (!card) return;
-        var project = card.getAttribute('data-project');
-        if (project) {
-          window.location.href = '/project/' + project;
-        } else {
-          window.location.href = '/';
+        if (card) navFromColor(card);
+      });
+      gallery.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          var card = e.target.closest('.ap-card');
+          if (card) { e.preventDefault(); navFromColor(card); }
         }
       });
     }

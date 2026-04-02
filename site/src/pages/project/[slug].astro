@@ -26,10 +26,16 @@ const items = galleryItems.filter((i) => i.project === project.slug).sort(() => 
   <script is:inline>
     var gallery = document.getElementById('gallery');
     if (gallery) {
+      function navHome(card) { window.location.href = '/'; }
       gallery.addEventListener('click', function(e) {
         var card = e.target.closest('.ap-card');
-        if (!card) return;
-        window.location.href = '/';
+        if (card) navHome(card);
+      });
+      gallery.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          var card = e.target.closest('.ap-card');
+          if (card) { e.preventDefault(); navHome(card); }
+        }
       });
     }
   </script>

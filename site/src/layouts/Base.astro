@@ -1,13 +1,23 @@
 ---
 interface Props {
   title?: string;
+  description?: string;
   bodyClass?: string;
   showHeader?: boolean;
   showIntro?: boolean;
   projectName?: string;
+  noindex?: boolean;
 }
 
-const { title = 'Almost Parallel', bodyClass = '', showHeader = true, showIntro = false, projectName = '' } = Astro.props;
+const {
+  title = 'Almost Parallel',
+  description = 'Almost Parallel is an architecture office where research, registration and essay are the main fundaments of the work.',
+  bodyClass = '',
+  showHeader = true,
+  showIntro = false,
+  projectName = '',
+  noindex = false,
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -15,7 +25,10 @@ const { title = 'Almost Parallel', bodyClass = '', showHeader = true, showIntro 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex, follow" />}
   <title>{title}</title>
+  <link rel="preload" href="/fonts/AdelleSans-Light.otf" as="font" type="font/otf" crossorigin />
   <link rel="stylesheet" href="/styles/reset.css" />
   <link rel="stylesheet" href="/styles/layout.css" />
   <link rel="stylesheet" href="/styles/components.css" />
@@ -41,7 +54,7 @@ const { title = 'Almost Parallel', bodyClass = '', showHeader = true, showIntro 
             <span data-en="Spain" data-es="España">Spain</span>
           </div>
           <div class="ap-header__ig">
-            <a href="https://instagram.com/almostparallel.studio" target="_blank">IG</a>
+            <a href="https://instagram.com/almost__parallel" target="_blank" rel="noopener noreferrer">IG</a>
             <span>+</span>
           </div>
           <p class="ap-header__desc" data-en="This website is our digital archive. A compendium of our architecture studio's ideas, processes and realities" data-es="Este sitio web es nuestro archivo digital. Un compendio de las ideas, procesos y realidades de nuestro estudio de arquitectura">This website is our digital archive. A compendium of our architecture studio's ideas, processes and realities</p>
@@ -61,8 +74,8 @@ const { title = 'Almost Parallel', bodyClass = '', showHeader = true, showIntro 
           <div class="ap-header__ig-spacer"></div>
           <div class="ap-header__desc2"></div>
           <div class="ap-header__lang">
-            <button id="lang-en" class="ap-header__btn ap-header__btn--active">[ ENG ]</button>
-            <button id="lang-es" class="ap-header__btn">[ ESP ]</button>
+            <button id="lang-en" class="ap-header__btn ap-header__btn--active" aria-pressed="true">[ ENG ]</button>
+            <button id="lang-es" class="ap-header__btn" aria-pressed="false">[ ESP ]</button>
           </div>
         </div>
 
@@ -97,7 +110,7 @@ const { title = 'Almost Parallel', bodyClass = '', showHeader = true, showIntro 
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Grid/Loop nav
+    // Grid/Loop nav (non-home pages only)
     var gridBtn = document.getElementById('toggle-grid');
     var loopBtn = document.getElementById('toggle-loop');
     var isHome = window.location.pathname === '/' || window.location.pathname === '';
@@ -131,13 +144,13 @@ const { title = 'Almost Parallel', bodyClass = '', showHeader = true, showIntro 
       localStorage.setItem('ap-lang', lang);
       document.documentElement.lang = lang === 'es' ? 'es' : 'en';
 
-      // Toggle button states
       if (langEn && langEs) {
         langEn.classList.toggle('ap-header__btn--active', lang === 'en');
         langEs.classList.toggle('ap-header__btn--active', lang === 'es');
+        langEn.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
+        langEs.setAttribute('aria-pressed', lang === 'es' ? 'true' : 'false');
       }
 
-      // Swap all elements with data-en / data-es attributes
       var els = document.querySelectorAll('[data-en][data-es]');
       els.forEach(function(el) {
         el.textContent = lang === 'es' ? el.getAttribute('data-es') : el.getAttribute('data-en');
@@ -151,7 +164,6 @@ const { title = 'Almost Parallel', bodyClass = '', showHeader = true, showIntro 
       langEs.addEventListener('click', function() { setLang('es'); });
     }
 
-    // Restore saved language
     var savedLang = localStorage.getItem('ap-lang');
     if (savedLang === 'es') {
       setLang('es');

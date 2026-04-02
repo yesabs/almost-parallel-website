@@ -19,7 +19,6 @@ const gridItems = [...galleryItems].sort(() => Math.random() - 0.5);
 
   <!-- Grid view — each image repeated across its row -->
   {(() => {
-    // Row patterns: how many times to repeat the image in that row
     const rowPatterns = [4, 3, 5, 2, 4, 3, 6, 2, 5, 3, 4, 3];
     let rowIndex = 0;
     const rows: { item: typeof gridItems[0]; repeat: number }[] = [];
@@ -49,10 +48,21 @@ const gridItems = [...galleryItems].sort(() => Math.random() - 0.5);
     var footer = document.querySelector('.ap-footer');
     var main = document.querySelector('.ap-main');
 
-    if (scatter) {
-      scatter.addEventListener('click', function(e) {
+    function handleCardAction(container, callback) {
+      container.addEventListener('click', function(e) {
         var card = e.target.closest('.ap-card');
-        if (!card) return;
+        if (card) callback(card);
+      });
+      container.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          var card = e.target.closest('.ap-card');
+          if (card) { e.preventDefault(); callback(card); }
+        }
+      });
+    }
+
+    if (scatter) {
+      handleCardAction(scatter, function(card) {
         var theme = card.getAttribute('data-theme');
         if (theme) window.location.href = '/filter/theme/' + theme;
       });
@@ -61,7 +71,7 @@ const gridItems = [...galleryItems].sort(() => Math.random() - 0.5);
     var loopBtn = document.getElementById('toggle-loop');
     var gridBtn = document.getElementById('toggle-grid');
 
-    if (loopBtn && gridBtn) {
+    if (loopBtn && gridBtn && scatter && grid) {
       gridBtn.addEventListener('click', function() {
         scatter.style.display = 'none';
         grid.style.display = '';
@@ -81,18 +91,18 @@ const gridItems = [...galleryItems].sort(() => Math.random() - 0.5);
         loopBtn.classList.add('ap-header__btn--active');
         gridBtn.classList.remove('ap-header__btn--active');
       });
-    }
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && grid.style.display !== 'none') {
-        loopBtn.click();
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && grid.style.display !== 'none') {
+          loopBtn.click();
+        }
+      });
+
+      // Auto-switch to grid if navigated with ?view=grid
+      if (new URLSearchParams(window.location.search).get('view') === 'grid') {
+        gridBtn.click();
+        history.replaceState(null, '', '/');
       }
-    });
-
-    // Auto-switch to grid if navigated with ?view=grid
-    if (new URLSearchParams(window.location.search).get('view') === 'grid') {
-      gridBtn.click();
-      history.replaceState(null, '', '/');
     }
 
     // Infinite scroll for grid view

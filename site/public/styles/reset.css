@@ -130,3 +130,15 @@ button {
   0% { opacity: 0; transform: translateY(6px); }
   100% { opacity: 1; transform: translateY(0); }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-intro__text--top,
+  .ap-intro__text--bottom {
+    animation: none;
+    opacity: 1;
+  }
+  .ap-intro,
+  .ap-site-content {
+    transition: none;
+  }
+}

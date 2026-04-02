@@ -12,7 +12,7 @@ const { theme } = Astro.params;
 const filtered = galleryItems.filter(i => i.theme === theme).sort(() => Math.random() - 0.5).slice(0, 12);
 ---
 
-<Base title={`${theme} — Almost Parallel`}>
+<Base title={`${theme} — Almost Parallel`} noindex={true}>
   <div class="ap-scatter" id="gallery">
     {filtered.map((item) => (
       <div class="ap-scatter__item">
@@ -24,12 +24,18 @@ const filtered = galleryItems.filter(i => i.theme === theme).sort(() => Math.ran
   <script is:inline define:vars={{ currentTheme: theme }}>
     var gallery = document.getElementById('gallery');
     if (gallery) {
+      function navToColor(card) {
+        var color = card.getAttribute('data-color');
+        if (color) window.location.href = '/filter/color/' + currentTheme + '/' + color;
+      }
       gallery.addEventListener('click', function(e) {
         var card = e.target.closest('.ap-card');
-        if (!card) return;
-        var color = card.getAttribute('data-color');
-        if (color) {
-          window.location.href = '/filter/color/' + currentTheme + '/' + color;
+        if (card) navToColor(card);
+      });
+      gallery.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          var card = e.target.closest('.ap-card');
+          if (card) { e.preventDefault(); navToColor(card); }
         }
       });
     }
